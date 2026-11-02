@@ -1,44 +1,69 @@
-# Mohsen Time Zone Converter
+# Mohsen Tools — World Time & Meeting Planner
 
-A lightweight, responsive time-zone comparison tool that always compares a selected location with **Egypt (Africa/Cairo)**.
+A standalone, responsive world-clock and international meeting planner. Built as a static web app with no build step or API key.
 
 ## Features
 
-- Search by ZIP / postal code, city, or full address.
-- Choose from multiple geocoding matches when a postal code or place name is ambiguous.
-- Compare the current time in Egypt and the selected location.
-- Show each location's current date, UTC offset, and IANA time-zone identifier.
-- Display the current difference in hours and minutes, including whether the selected place is ahead of or behind Egypt.
-- Refresh the clocks every second and account for daylight-saving changes using IANA time-zone rules.
-- 12-hour and 24-hour display modes.
-- No API key, build step, or framework required.
+### World clock
+- Search by city, street address, ZIP code or postal code.
+- Select among geocoding matches; resolve coordinates to an IANA time zone.
+- Add up to 10 cities to a live, side-by-side world clock.
+- 12/24-hour display, local dates, UTC offsets and difference from Egypt.
+- Save favorites and recent searches in the browser.
+- Use browser geolocation with permission.
+- Share a link containing your selected city setup.
+- Quick browser of popular global business hubs.
 
-## Open the tool
+### Time conversion
+- Convert a selected local date and time between IANA time zones.
+- Apply date-specific daylight-saving offsets using the browser's Intl time-zone database.
+- Show source and target offsets and compare historical/future offsets around the selected date.
+- Export a converted appointment as an .ics calendar event.
 
-After GitHub Pages finishes deploying, open:
+### Meeting planning
+- Set working hours, date, duration and attendees from your saved locations.
+- Find half-hour start times where all selected cities are within the configured working hours.
+- View a 24-hour working-hours timeline.
+- Find the next practical local time to call a recipient.
+- Preview the next six weekly recurring meeting occurrences in every saved city.
+- Export those six occurrences as a multi-event .ics calendar file.
 
-https://mohamed20034.github.io/mohsenplayer/timezone-calculator/
+### Map and daylight
+- Interactive OpenStreetMap map with saved and popular-city markers.
+- View local sunrise, sunset and a day/night indicator.
+- Compare current UTC offset with the offset 180 days ahead for seasonal/DST change alerts.
 
-## How it works
+### Installability
+- Web app manifest and service worker for installable PWA behavior.
+- The app shell is cached for basic offline loading. Geocoding, time-zone lookup, map tiles and sunrise/sunset data still require an internet connection.
 
-1. **Photon** converts the submitted ZIP code or address into location coordinates. The user chooses one of the matching results.
-2. **Hourora** maps those coordinates to the nearest city in its time-zone dataset.
-3. The app compares that IANA time zone with `Africa/Cairo` and keeps the two clocks in sync using the server's UTC timestamp and the browser's time-zone-aware `Intl.DateTimeFormat`.
+## Deploy with GitHub Pages
 
-## Accuracy note
+1. Open **Settings → Pages** in this repository.
+2. Under **Build and deployment**, select **Deploy from a branch**.
+3. Select branch **main** and folder **/(root)**, then Save.
+4. Wait for GitHub Pages to publish the site.
 
-Hourora's coordinate lookup uses the **nearest listed city** and does not model time-zone borders. A result near a time-zone boundary, or far from a listed city, may therefore be approximate. The interface shows the nearest city and approximate distance when supplied by the API. Verify critical travel, payroll, or scheduling decisions with an authoritative local source.
+The expected URL is:
 
-## Data sources and attribution
+https://mohamed20034.github.io/tools/
 
-- Geocoding: [Photon by Komoot](https://github.com/komoot/photon), based on [OpenStreetMap](https://www.openstreetmap.org/copyright) data.
-- Time-zone data and conversion: [Hourora Developer API](https://hourora.app/en/developers), based on the IANA Time Zone Database.
-- This app sends the search text to Photon to find coordinates. Do not submit confidential addresses or personal information.
+## Data sources and limitations
+
+- **Photon / OpenStreetMap** provides address and postal-code geocoding.
+- **Hourora API** maps searched coordinates to a time-zone identifier using its nearest-city dataset. This may be approximate near time-zone borders or remote locations.
+- **Browser Intl / IANA time-zone data** formats clocks and performs date-aware UTC-offset calculations.
+- **Open-Meteo** provides sunrise and sunset times.
+- **Leaflet + OpenStreetMap** provide the interactive map.
+
+Meeting overlap is calculated in 30-minute increments using the selected workday window and each city's local time. It is a planning aid, not a guarantee of participant availability. DST transitions can make some local wall-clock times ambiguous or nonexistent; verify critical meetings.
+The DST alert compares the current UTC offset with the offset 180 days later. It indicates a likely seasonal offset change but does not claim to report the exact transition date.
+Geolocation is only accessed after the user presses the location button and grants browser permission. Favorites and recent searches are stored locally in the browser. Share links include selected city names, coordinates and time zones in the URL.
 
 ## Run locally
 
-Open `index.html` in a modern browser, or serve this folder with any static web server. The browser needs an internet connection to call the APIs.
+Serve the repository root with any static HTTP server and open `index.html`. A local server is recommended for service-worker/PWA testing. Internet access is needed for external data services.
 
 ## License
 
-The application code in this folder is provided under the MIT License. The geocoding and time-zone services remain subject to their respective terms and availability.
+MIT. Third-party services and map data remain subject to their own terms and attribution requirements.
