@@ -4,99 +4,161 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#090e19">
-<meta name="description" content="Compare the time in any city with Egypt.">
+<meta name="description" content="Compare two cities or countries, local times, time zones and hotel calling hours.">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>Mohsen Tools — Egypt Time Difference</title>
+<title>Mohsen Tools — World Time Compare</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#090e19;--panel:#111a2a;--line:#26354b;--muted:#93a3ba;--text:#f3f6fc;--mint:#70e0d0;--violet:#a99aff;--pink:#ff91a8}
+:root{color-scheme:dark;--bg:#090e19;--panel:#111a2a;--line:#26354b;--muted:#93a3ba;--text:#f3f6fc;--mint:#70e0d0;--violet:#a99aff;--pink:#ff91a8;--green:#7ce1b7;--yellow:#f6d77b}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 8% 0%,#29224a55,transparent 36%),radial-gradient(ellipse at 95% 35%,#154d4c30,transparent 32%),var(--bg);color:var(--text);font:15px 'DM Sans',Arial,sans-serif}
-button,input{font:inherit}
-button{cursor:pointer}
-.wrap{width:min(920px,calc(100% - 30px));margin:auto;padding:28px 0 45px}
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px}
+button,input,select{font:inherit}button{cursor:pointer}
+.wrap{width:min(1050px,calc(100% - 30px));margin:auto;padding:25px 0 42px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:38px}
 .brand{display:flex;align-items:center;gap:11px}.logo{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,var(--violet),var(--mint));color:#101426;display:grid;place-items:center;font-weight:900;font-size:19px}.brand b{font-size:12px;letter-spacing:.16em}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em;margin-top:3px}
-.live{border:1px solid var(--line);padding:8px 12px;border-radius:99px;color:#c2d0e3;font-size:11px}.live i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#7ce1b7;margin-right:7px;box-shadow:0 0 12px #7ce1b7}
-.hero{margin-bottom:26px}.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--mint);font-weight:800}.hero h1{font-size:clamp(32px,6vw,52px);letter-spacing:-.05em;margin:9px 0}.hero p{color:var(--muted);line-height:1.7;margin:0;max-width:650px}
-.panel{background:linear-gradient(145deg,#162236f2,#101827f5);border:1px solid var(--line);border-radius:19px;padding:22px;box-shadow:0 18px 60px #0003;margin-bottom:16px}
-.panel h2{font-size:12px;letter-spacing:.12em;margin:0 0 15px;color:#dce5f2}
-.searchrow{display:grid;grid-template-columns:1fr auto;gap:9px}
-input{width:100%;min-width:0;background:#0b1321;border:1px solid #2b3a51;border-radius:11px;padding:14px;color:var(--text);outline:none}
-input:focus{border-color:var(--violet)}
-.btn{border:0;border-radius:11px;padding:12px 19px;background:linear-gradient(100deg,#b5aaff,#70e0d0);color:#0c1422;font-weight:800;font-size:12px}
-.btn:disabled{opacity:.5}
-.status{min-height:20px;color:var(--muted);font-size:11px;margin:10px 0 0}
-.results{display:grid;gap:7px;margin-top:8px}
-.result{display:flex;justify-content:space-between;align-items:center;text-align:left;width:100%;background:#0b1423;border:1px solid var(--line);border-radius:11px;padding:12px;color:var(--text)}
-.result small{display:block;color:var(--muted);margin-top:3px;font-size:10px}
-.compare{display:grid;grid-template-columns:1fr 54px 1fr;gap:12px;align-items:stretch}
-.clock{background:#0b1423;border:1px solid var(--line);border-radius:15px;padding:20px;min-width:0}
-.clock.egypt{border-color:#4a6873;background:linear-gradient(145deg,#183039,#0b1423)}
-.clockhead{display:flex;align-items:center;gap:9px;font-weight:800;font-size:13px}
-.flag{font-size:23px}.clock .time{font:600 clamp(27px,5vw,39px) 'IBM Plex Mono',monospace;letter-spacing:-.06em;margin:24px 0 7px;white-space:nowrap}
-.clock .date{color:var(--muted);font-size:11px}.offset{margin-top:17px;padding-top:13px;border-top:1px solid var(--line);font:11px 'IBM Plex Mono';color:#bdcbe0}
-.swap{display:grid;place-items:center;color:var(--mint);font-size:21px}
-.difference{margin-top:14px;border:1px solid #514b7c;background:linear-gradient(100deg,#a99aff1d,#70e0d012);border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.difference small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em;margin-bottom:5px}.difference strong{font-size:14px}.diffnum{font:600 25px 'IBM Plex Mono';color:var(--mint);white-space:nowrap}
-.quick{display:flex;flex-wrap:wrap;gap:8px}.quick button{border:1px solid var(--line);background:#18243a;color:#dce6f5;border-radius:10px;padding:9px 13px;font-size:11px;font-weight:700}.quick button:hover{border-color:var(--violet)}
-.empty{color:var(--muted);font-size:12px;line-height:1.6}
-footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}
-@media(max-width:560px){.wrap{padding-top:18px}.top{margin-bottom:34px}.panel{padding:16px}.searchrow{grid-template-columns:1fr}.btn{width:100%}.compare{grid-template-columns:1fr;gap:9px}.swap{height:20px;transform:rotate(90deg)}.clock{padding:16px}.clock .time{margin:16px 0 6px}.difference{align-items:flex-start;flex-direction:column}.diffnum{font-size:23px}}
+.live{border:1px solid var(--line);padding:8px 12px;border-radius:99px;color:#c2d0e3;font-size:11px;white-space:nowrap}.live i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 12px var(--green)}
+.hero{margin-bottom:24px}.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--mint);font-weight:800}.hero h1{font-size:clamp(31px,5vw,47px);letter-spacing:-.05em;margin:9px 0}.hero p{color:var(--muted);line-height:1.7;margin:0;max-width:760px}
+.panel{background:linear-gradient(145deg,#162236f2,#101827f5);border:1px solid var(--line);border-radius:19px;padding:21px;box-shadow:0 18px 60px #0003;margin-bottom:16px}
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.panel h2{font-size:12px;letter-spacing:.12em;margin:0;color:#dce5f2}
+.fieldlabel{font-size:11px;color:#d0d9e8;font-weight:700;display:block;margin-bottom:7px}
+.searchgrid{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:9px}
+input,select{width:100%;min-width:0;background:#0b1321;border:1px solid #2b3a51;border-radius:11px;padding:12px;color:var(--text);outline:none;min-height:45px}
+input:focus,select:focus{border-color:var(--violet)}
+.btn{border:0;border-radius:11px;padding:12px 17px;background:linear-gradient(100deg,#b5aaff,#70e0d0);color:#0c1422;font-weight:800;font-size:12px;white-space:nowrap}.btn:disabled{opacity:.5;cursor:wait}
+.status{min-height:19px;color:var(--muted);font-size:11px;margin:10px 0 0}.status.error{color:var(--pink)}
+.results{display:grid;gap:7px;margin-top:8px}.result{display:flex;justify-content:space-between;align-items:center;text-align:left;width:100%;background:#0b1423;border:1px solid var(--line);border-radius:11px;padding:11px 13px;color:var(--text)}.result:hover{border-color:var(--violet)}.result small{display:block;color:var(--muted);margin-top:3px;font-size:10px}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.control{display:flex;gap:8px;align-items:center}.control label{font-size:10px;color:var(--muted);font-weight:700}.control select{width:auto;min-width:145px;min-height:37px;padding:8px 10px;font-size:11px}
+.format{display:flex;padding:3px;background:#0b1321;border:1px solid var(--line);border-radius:10px;gap:3px}.format button{background:transparent;border:0;color:var(--muted);font-size:10px;font-weight:800;padding:7px 10px;border-radius:7px}.format button.active{background:var(--violet);color:#111628}
+.compare{display:grid;grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr);gap:12px;align-items:stretch}
+.citycard{background:#0b1423;border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.citycard.home{border-color:#4a6873;background:linear-gradient(145deg,#183039,#0b1423)}
+.cityhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.cityidentity{display:flex;align-items:center;gap:10px;min-width:0}.flag{font-size:25px;line-height:1}.cityname{font-size:15px;font-weight:800;overflow-wrap:anywhere}.country{font-size:11px;color:var(--muted);margin-top:3px}.sidebadge{border:1px solid var(--line);border-radius:99px;padding:5px 8px;font-size:9px;color:#b8c7dc;white-space:nowrap}
+.time{font:600 clamp(28px,4vw,39px) 'IBM Plex Mono',monospace;letter-spacing:-.06em;margin:23px 0 6px;white-space:nowrap}
+.date{color:var(--muted);font-size:11px}.zonebox{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:6px}.zone-main{font-size:11px;font-weight:700;color:#d9e4f3;overflow-wrap:anywhere}.zone-meta{font:10px 'IBM Plex Mono';color:var(--mint)}
+.callbox{margin-top:14px;border:1px solid var(--line);background:#121d2d;border-radius:12px;padding:11px}.calltop{display:flex;align-items:center;justify-content:space-between;gap:7px}.calltop b{font-size:10px;letter-spacing:.08em}.callstatus{font-size:10px;font-weight:800;padding:5px 8px;border-radius:99px;background:#29364b;color:#c8d5e8}.callstatus.good{background:#14382f;color:var(--green)}.callstatus.ok{background:#3c351c;color:var(--yellow)}.callstatus.bad{background:#3b2430;color:#ffadbc}.callnote{font-size:10px;color:var(--muted);line-height:1.5;margin-top:7px}.callwindow{font:10px 'IBM Plex Mono';color:#c7d4e5;margin-top:6px}
+.swap{display:grid;place-items:center;color:var(--mint);font-size:22px}
+.diffpanel{margin-top:15px;padding:16px 18px;border:1px solid #514b7c;background:linear-gradient(100deg,#a99aff1d,#70e0d012);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}.diffpanel small{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em;margin-bottom:5px}.diffpanel strong{font-size:14px}.diffnumber{font:600 25px 'IBM Plex Mono';color:var(--mint);white-space:nowrap}
+.quick{display:flex;flex-wrap:wrap;gap:8px}.quick button{border:1px solid var(--line);background:#18243a;color:#dce6f5;border-radius:10px;padding:9px 12px;font-size:11px;font-weight:700}.quick button:hover{border-color:var(--violet)}
+.guide{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.guideitem{background:#0b1423;border:1px solid var(--line);border-radius:12px;padding:13px}.guideitem b{display:block;font-size:11px;margin-bottom:5px}.guideitem span{display:block;color:var(--mint);font:10px 'IBM Plex Mono';margin-bottom:5px}.guideitem small{color:var(--muted);font-size:10px;line-height:1.5}
+.note{font-size:10px;color:#8191a9;line-height:1.6;margin-top:12px}
+footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{color:var(--violet);text-decoration:none}
+@media(max-width:700px){.compare{grid-template-columns:1fr;gap:9px}.swap{height:23px;transform:rotate(90deg)}.searchgrid{grid-template-columns:1fr 125px}.searchgrid .btn{grid-column:1/-1;width:100%}}
+@media(max-width:460px){.wrap{width:calc(100% - 20px);padding-top:17px}.top{margin-bottom:29px}.panel{padding:15px}.searchgrid{grid-template-columns:1fr}.control{width:100%;justify-content:space-between}.control select{flex:1}.panelhead{align-items:flex-start;flex-direction:column}.citycard{padding:15px}.time{font-size:32px;margin:18px 0 5px}.diffpanel{align-items:flex-start;flex-direction:column}.guide{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><div class="logo">M</div><div><b>MOHSEN TOOLS</b><small>TIME ZONE DIFFERENCE</small></div></div><span class="live"><i></i>LIVE TIME</span></header>
-<section class="hero"><div class="eyebrow">EGYPT IS YOUR REFERENCE</div><h1>What time is it there?</h1><p>Search for any city or country and instantly see its local time, the time in Egypt, and the exact difference between them.</p></section>
+<header class="top"><div class="brand"><div class="logo">M</div><div><b>MOHSEN TOOLS</b><small>WORLD TIME · HOTEL CALL PLANNER</small></div></div><span class="live"><i></i>LIVE COMPARISON</span></header>
+<section class="hero"><div class="eyebrow">TWO PLACES. ONE CLEAR COMPARISON.</div><h1>Compare time zones</h1><p>Compare the local time, UTC offset and time difference between any two cities or countries. Check whether it is a suitable local time to call a hotel's General Manager or Marketing Manager.</p></section>
+
 <section class="panel">
-<h2>FIND A CITY OR COUNTRY</h2>
-<form id="searchForm"><div class="searchrow"><input id="query" required autocomplete="off" placeholder="Try London, New York, Dubai, or 10001"><button class="btn" id="searchBtn">Compare time</button></div></form>
-<div class="status" id="status" aria-live="polite">Search for a city, then choose the correct result.</div><div class="results" id="results"></div>
+<div class="panelhead"><h2>CHANGE A LOCATION</h2><span class="sidebadge">Search by city OR ZIP / postal code</span></div>
+<div class="searchgrid">
+<div><label class="fieldlabel" for="query">Search for a city or postal code</label><input id="query" autocomplete="off" placeholder="e.g. London, Dubai, 10001"></div>
+<div><label class="fieldlabel" for="targetSide">Apply result to</label><select id="targetSide"><option value="A">Location A</option><option value="B">Location B</option></select></div>
+<button class="btn" id="searchBtn">Search</button>
+</div>
+<div class="controls" style="margin-top:12px">
+<div class="control"><label>SEARCH TYPE</label><div class="format" id="searchMode"><button type="button" class="active" data-mode="city">City</button><button type="button" data-mode="zip">ZIP / Postal</button></div></div>
+<div class="control"><label>QUICK CITY APPLIES TO</label><select id="quickTarget"><option value="B">Location B</option><option value="A">Location A</option></select></div>
+</div>
+<div class="status" id="status" aria-live="polite">Choose City or ZIP / Postal, enter a search and select a matching result.</div>
+<div class="results" id="results"></div>
 </section>
+
 <section class="panel">
-<h2>TIME COMPARISON</h2>
-<div id="comparison" class="empty">Choose a city above to compare its time with Egypt.</div>
+<div class="panelhead"><h2>LIVE COMPARISON</h2><div class="controls">
+<div class="control"><label>TIME FORMAT</label><div class="format" id="timeFormat"><button type="button" data-format="12" class="active">12H</button><button type="button" data-format="24">24H</button></div></div>
+<div class="control"><label>CALLING</label><select id="role"><option value="gm">General Manager (GM)</option><option value="marketing">Marketing Manager</option></select></div>
+</div></div>
+<div class="compare">
+<article class="citycard home" id="cardA"></article><div class="swap">⇄</div><article class="citycard" id="cardB"></article>
+</div>
+<div class="diffpanel"><div><small>TIME DIFFERENCE</small><strong id="diffText">—</strong></div><div class="diffnumber" id="diffNumber">—</div></div>
+<div class="note">Both clocks update automatically. Local offsets and daylight-saving changes are calculated for the selected date and time zone.</div>
 </section>
+
 <section class="panel">
-<h2>POPULAR CITIES</h2><div class="quick" id="quick"></div>
+<div class="panelhead"><h2>QUICK CITY PICKS</h2><span class="sidebadge">Adds to the selected location above</span></div>
+<div class="quick" id="quick"></div>
 </section>
-<footer>Time difference automatically adjusts for daylight saving time. Search powered by OpenStreetMap.</footer>
+
+<section class="panel">
+<h2 style="margin-bottom:13px">HOTEL OUTREACH — SUGGESTED CALL WINDOWS</h2>
+<div class="guide">
+<div class="guideitem"><b>General Manager (GM)</b><span>09:30–11:00 · 14:00–15:00</span><small>Try mid-morning or before the afternoon arrival period. Tue–Thu are preferred where possible.</small></div>
+<div class="guideitem"><b>Marketing Manager</b><span>10:00–12:00 · 14:00–16:30</span><small>A broader office-hours window, while avoiding the lunch period and late-day hotel activity.</small></div>
+</div>
+<div class="note">These are practical outreach suggestions, not guaranteed availability. Hotel check-out and check-in patterns vary by property and country. The app marks weekends and compares the current local time with the suggested windows.</div>
+</section>
+<footer>Time-zone lookup: <a href="https://hourora.app/en/developers" target="_blank" rel="noopener">Hourora / IANA</a> · Place search: Photon / OpenStreetMap · © 2026</footer>
 </div>
 <script>
 (function(){
 'use strict';
-const $=id=>document.getElementById(id), EGYPT='Africa/Cairo';
-const PHOTON='https://photon.komoot.io/api/', HOURORA='https://hourora.app/api/v1';
-const popular=[
-{name:'London',country:'United Kingdom',zone:'Europe/London',lat:51.5072,lon:-.1276,flag:'🇬🇧'},
-{name:'New York',country:'United States',zone:'America/New_York',lat:40.7128,lon:-74.006,flag:'🇺🇸'},
-{name:'Dubai',country:'United Arab Emirates',zone:'Asia/Dubai',lat:25.2048,lon:55.2708,flag:'🇦🇪'},
-{name:'Riyadh',country:'Saudi Arabia',zone:'Asia/Riyadh',lat:24.7136,lon:46.6753,flag:'🇸🇦'},
-{name:'Paris',country:'France',zone:'Europe/Paris',lat:48.8566,lon:2.3522,flag:'🇫🇷'},
-{name:'Berlin',country:'Germany',zone:'Europe/Berlin',lat:52.52,lon:13.405,flag:'🇩🇪'},
-{name:'Tokyo',country:'Japan',zone:'Asia/Tokyo',lat:35.6762,lon:139.6503,flag:'🇯🇵'},
-{name:'Los Angeles',country:'United States',zone:'America/Los_Angeles',lat:34.0522,lon:-118.2437,flag:'🇺🇸'},
-{name:'Istanbul',country:'Türkiye',zone:'Europe/Istanbul',lat:41.0082,lon:28.9784,flag:'🇹🇷'},
-{name:'Doha',country:'Qatar',zone:'Asia/Qatar',lat:25.2854,lon:51.531,flag:'🇶🇦'}
+const $=id=>document.getElementById(id);
+const PHOTON='https://photon.komoot.io/api/';
+const HOURORA='https://hourora.app/api/v1';
+const WEEKEND_FRI_SAT=new Set(['EG','DZ','BH','BD','IQ','IL','JO','KW','LY','OM','QA','SA','SD','YE','PS']);
+const presets=[
+{name:'Cairo',country:'Egypt',countryCode:'EG',zone:'Africa/Cairo',lat:30.0444,lon:31.2357},
+{name:'London',country:'United Kingdom',countryCode:'GB',zone:'Europe/London',lat:51.5072,lon:-0.1276},
+{name:'New York',country:'United States',countryCode:'US',zone:'America/New_York',lat:40.7128,lon:-74.006},
+{name:'Dubai',country:'United Arab Emirates',countryCode:'AE',zone:'Asia/Dubai',lat:25.2048,lon:55.2708},
+{name:'Riyadh',country:'Saudi Arabia',countryCode:'SA',zone:'Asia/Riyadh',lat:24.7136,lon:46.6753},
+{name:'Paris',country:'France',countryCode:'FR',zone:'Europe/Paris',lat:48.8566,lon:2.3522},
+{name:'Berlin',country:'Germany',countryCode:'DE',zone:'Europe/Berlin',lat:52.52,lon:13.405},
+{name:'Tokyo',country:'Japan',countryCode:'JP',zone:'Asia/Tokyo',lat:35.6762,lon:139.6503},
+{name:'Istanbul',country:'Türkiye',countryCode:'TR',zone:'Europe/Istanbul',lat:41.0082,lon:28.9784},
+{name:'Doha',country:'Qatar',countryCode:'QA',zone:'Asia/Qatar',lat:25.2854,lon:51.531},
+{name:'Singapore',country:'Singapore',countryCode:'SG',zone:'Asia/Singapore',lat:1.3521,lon:103.8198},
+{name:'Toronto',country:'Canada',countryCode:'CA',zone:'America/Toronto',lat:43.6532,lon:-79.3832}
 ];
-let selected=null;
+let locationA=load('mohsen_compare_a')||presets[0];
+let locationB=load('mohsen_compare_b')||presets[1];
+let mode='city',format='12';
+function load(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function getJson(url){const r=await fetch(url,{headers:{Accept:'application/json'}});if(!r.ok)throw Error('Service unavailable');return r.json()}
+function flag(code){if(!code||String(code).length!==2)return '🌍';return String.fromCodePoint(...code.toUpperCase().split('').map(c=>127397+c.charCodeAt(0)))}
+async function getJson(url){const r=await fetch(url,{headers:{Accept:'application/json'}});if(!r.ok)throw Error(r.status===429?'Search limit reached. Try again in a moment.':'The search service is unavailable.');return r.json()}
 function offset(date,zone){const f=new Intl.DateTimeFormat('en-GB',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});const p={};f.formatToParts(date).forEach(x=>{if(x.type!=='literal')p[x.type]=+x.value});return Math.round((Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second)-Math.floor(date.getTime()/1000)*1000)/60000)}
-function offsetLabel(n){const sign=n>=0?'+':'−',a=Math.abs(n);return 'UTC'+sign+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0')}
-function time(zone,date){return new Intl.DateTimeFormat('en-GB',{timeZone:zone,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(date)}
-function dateText(zone,date){return new Intl.DateTimeFormat('en-GB',{timeZone:zone,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(date)}
-function formatDiff(m){const a=Math.abs(m),h=Math.floor(a/60),n=a%60;if(!m)return 'Same time';return (m>0?'Ahead of Egypt by ':'Behind Egypt by ')+(h?h+' hour'+(h===1?'':'s'):'')+(h&&n?' and ':'')+(n?n+' minutes':'')}
-function render(){if(!selected)return;const now=new Date(),a=offset(now,EGYPT),b=offset(now,selected.zone),d=b-a;const flag=selected.flag||'🌍';$('comparison').innerHTML='<div class="compare"><article class="clock egypt"><div class="clockhead"><span class="flag">🇪🇬</span><span>Cairo, Egypt</span></div><div class="time" id="egyptTime"></div><div class="date" id="egyptDate"></div><div class="offset">'+offsetLabel(a)+' · Africa/Cairo</div></article><div class="swap">⇄</div><article class="clock"><div class="clockhead"><span class="flag">'+flag+'</span><span>'+esc(selected.name)+', '+esc(selected.country)+'</span></div><div class="time" id="cityTime"></div><div class="date" id="cityDate"></div><div class="offset">'+offsetLabel(b)+' · '+esc(selected.zone)+'</div></article></div><div class="difference"><div><small>TIME DIFFERENCE</small><strong id="diffText"></strong></div><div class="diffnum" id="diffNum"></div></div>' ;update()}
-function update(){if(!selected||!$('egyptTime'))return;const now=new Date(),a=offset(now,EGYPT),b=offset(now,selected.zone),d=b-a;$('egyptTime').textContent=time(EGYPT,now);$('egyptDate').textContent=dateText(EGYPT,now);$('cityTime').textContent=time(selected.zone,now);$('cityDate').textContent=dateText(selected.zone,now);$('diffText').textContent=formatDiff(d);const h=Math.floor(Math.abs(d)/60),m=Math.abs(d)%60;$('diffNum').textContent=(d>0?'+':d<0?'−':'')+h+':'+String(m).padStart(2,'0')}
-function choose(p){selected=p;render();$('results').replaceChildren();$('status').textContent='Showing the current time difference for '+p.name+'.'}
-async function resolve(feature){const props=feature.properties||{},[lon,lat]=feature.geometry.coordinates;const data=await getJson(HOURORA+'/lookup?lat='+encodeURIComponent(lat)+'&lng='+encodeURIComponent(lon));const zone=data.zone||(data.city&&data.city.zone);if(!zone)throw Error('Could not determine this location’s time zone.');return {name:props.name||props.city||props.postcode||'Selected place',country:props.country||props.state||'',zone,lat,lon,flag:'🌍'}}
-$('searchForm').addEventListener('submit',async e=>{e.preventDefault();const q=$('query').value.trim();if(q.length<2)return;$('searchBtn').disabled=true;$('results').replaceChildren();$('status').textContent='Searching for places…';try{const data=await getJson(PHOTON+'?q='+encodeURIComponent(q)+'&limit=7&lang=en');const features=(data.features||[]).filter(f=>f.geometry&&f.geometry.coordinates);if(!features.length){$('status').textContent='No results found. Try adding the country name.';return}$('status').textContent='Choose the correct city or location:';features.forEach(f=>{const p=f.properties||{},label=[p.name||p.city||p.postcode,p.city,p.state,p.country].filter((x,i,a)=>x&&a.indexOf(x)===i).join(', '),b=document.createElement('button');b.className='result';b.innerHTML='<span>'+esc(label)+'<small>'+esc([p.postcode,p.country].filter(Boolean).join(' · '))+'</small></span><b>→</b>';b.addEventListener('click',async()=>{b.disabled=true;$('status').textContent='Checking time zone…';try{choose(await resolve(f))}catch(err){$('status').textContent=err.message;b.disabled=false}});$('results').appendChild(b)})}catch(err){$('status').textContent='Search is unavailable right now. Please try again.'}finally{$('searchBtn').disabled=false}});
-popular.forEach(p=>{const b=document.createElement('button');b.textContent=p.flag+' '+p.name;b.addEventListener('click',()=>choose(p));$('quick').appendChild(b)});
-setInterval(update,1000);
+function offsetText(n){const sign=n>=0?'+':'−',a=Math.abs(n);return 'UTC'+sign+String(Math.floor(a/60)).padStart(2,'0')+':'+String(a%60).padStart(2,'0')}
+function timeText(zone,date){return new Intl.DateTimeFormat(format==='12'?'en-US':'en-GB',{timeZone:zone,hour:'numeric',minute:'2-digit',second:'2-digit',hour12:format==='12',hourCycle:format==='12'?'h12':'h23'}).format(date)}
+function dateText(zone,date){return new Intl.DateTimeFormat('en-US',{timeZone:zone,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(date)}
+function abbreviation(zone,date){const p=new Intl.DateTimeFormat('en-US',{timeZone:zone,timeZoneName:'short'}).formatToParts(date);return p.find(x=>x.type==='timeZoneName')?.value||zone}
+function signedDiff(m){if(m===0)return 'Same local time';const a=Math.abs(m),h=Math.floor(a/60),n=a%60;return (m>0?'Location B is ahead of A by ':'Location B is behind A by ')+(h?h+'h':'')+(h&&n?' ':'')+(n?n+'m':'')}
+function diffNum(m){const a=Math.abs(m),h=Math.floor(a/60),n=a%60;return (m>0?'+':m<0?'−':'')+h+':'+String(n).padStart(2,'0')}
+function cardMarkup(p,side){return '<div class="cityhead"><div class="cityidentity"><span class="flag">'+flag(p.countryCode)+'</span><div><div class="cityname">'+esc(p.name)+'</div><div class="country">'+esc(p.country||'')+'</div></div></div><span class="sidebadge">LOCATION '+side+'</span></div><div class="time" id="time'+side+'">--:--</div><div class="date" id="date'+side+'"></div><div class="zonebox"><div class="zone-main" id="zone'+side+'">'+esc(p.zone)+'</div><div class="zone-meta" id="offset'+side+'"></div></div><div class="callbox"><div class="calltop"><b>HOTEL CALL CHECK</b><span class="callstatus" id="callStatus'+side+'">Checking…</span></div><div class="callnote" id="callNote'+side+'"></div><div class="callwindow" id="callWindow'+side+'"></div></div>'}
+function paintCards(){try{new Intl.DateTimeFormat('en',{timeZone:locationA.zone});new Intl.DateTimeFormat('en',{timeZone:locationB.zone})}catch(e){$('status').textContent='Invalid time zone returned for a location. Please choose another result.';return}
+$('cardA').innerHTML=cardMarkup(locationA,'A');$('cardB').innerHTML=cardMarkup(locationB,'B');update()}
+function localParts(date,zone){const p={};new Intl.DateTimeFormat('en-US',{timeZone:zone,weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(date).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value});const days={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};return {day:days[p.weekday],hour:Number(p.hour),minute:Number(p.minute)}}
+function clockString(h,m){const date=new Date(2000,0,1,h,m);return new Intl.DateTimeFormat(format==='12'?'en-US':'en-GB',{hour:'numeric',minute:'2-digit',hour12:format==='12',hourCycle:format==='12'?'h12':'h23'}).format(date)}
+function callAdvice(place,now,role){const p=localParts(now,place.zone),mins=p.hour*60+p.minute,day=p.day;const weekend=WEEKEND_FRI_SAT.has((place.countryCode||'').toUpperCase())?[5,6]:[0,6];const isWeekend=weekend.includes(day);let windows=role==='gm'?[[570,660],[840,900]]:[[600,720],[840,990]];const windowText=windows.map(w=>clockString(Math.floor(w[0]/60),w[0]%60)+'–'+clockString(Math.floor(w[1]/60),w[1]%60)).join(' · ');
+let state='bad',label='Outside work hours',note='It is outside the usual hotel office window. Try the next local business day.';
+if(isWeekend){label='Local weekend';note='This is a weekend in this location. A hotel reception may be open, but the GM or marketing team may not be available.'}
+else if(mins<540||mins>=1080){label='Outside work hours';note='This is outside the suggested 09:00–18:00 hotel office window.'}
+else if(windows.some(w=>mins>=w[0]&&mins<w[1])){state='good';label='Good time to call';note=role==='gm'?'A suggested quieter window for a GM call, before or between busy guest-arrival periods.':'A suggested office-hours window for a Marketing Manager call.'}
+else if(mins>=540&&mins<1080){state='ok';label='Working hours';note=mins>=720&&mins<840?'Midday can be busy or close to lunch; try the suggested window instead.':role==='gm'&&mins>=900&&mins<1020?'Afternoon check-in activity may make the GM harder to reach.':'Within normal office hours, but outside the preferred calling window.'}
+return {state,label,note,windowText,dayName:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day],localTime:clockString(p.hour,p.minute)}}
+function updateCall(side,place,now){const advice=callAdvice(place,now,$('role').value),s=$('callStatus'+side);s.className='callstatus '+advice.state;s.textContent=advice.label;$('callNote'+side).textContent=advice.dayName+' · '+advice.localTime+' local time. '+advice.note;$('callWindow'+side).textContent='Suggested: '+advice.windowText+' (local time)'}
+function update(){if(!$('timeA'))return;const now=new Date();$('timeA').textContent=timeText(locationA.zone,now);$('timeB').textContent=timeText(locationB.zone,now);$('dateA').textContent=dateText(locationA.zone,now);$('dateB').textContent=dateText(locationB.zone,now);const a=offset(now,locationA.zone),b=offset(now,locationB.zone);$('offsetA').textContent=offsetText(a)+' · '+abbreviation(locationA.zone,now)+' · '+locationA.zone;$('offsetB').textContent=offsetText(b)+' · '+abbreviation(locationB.zone,now)+' · '+locationB.zone;const d=b-a;$('diffText').textContent=signedDiff(d);$('diffNumber').textContent=diffNum(d);updateCall('A',locationA,now);updateCall('B',locationB,now)}
+function setPlace(side,p){if(side==='A'){locationA=p;save('mohsen_compare_a',p)}else{locationB=p;save('mohsen_compare_b',p)}paintCards();$('results').replaceChildren();$('query').value='';$('status').className='status';$('status').textContent=p.name+' added to Location '+side+'.'}
+function status(s,error){$('status').textContent=s;$('status').className='status'+(error?' error':'')}
+function normalizeCity(x){const c=x.country||{};return {name:x.name||x.asciiName||'Selected city',country:typeof c==='string'?c:(c.name||''),countryCode:typeof c==='object'?c.code||'':(x.countryCode||''),zone:x.zone,lat:x.lat,lng:x.lng,flag:flag(typeof c==='object'?c.code:x.countryCode)}}
+function normalizePhoton(f){const p=f.properties||{},[lon,lat]=f.geometry.coordinates;return {name:p.name||p.city||p.postcode||'Selected location',country:p.country||p.state||'',countryCode:(p.countrycode||p.countryCode||'').toUpperCase(),zone:'',lat,lon}}
+async function search(){const q=$('query').value.trim(),side=$('targetSide').value;if(q.length<2)return;$('searchBtn').disabled=true;$('results').replaceChildren();status('Searching…');try{
+if(mode==='city'){let data;try{data=await getJson(HOURORA+'/cities?q='+encodeURIComponent(q)+'&limit=8')}catch(e){data=null}const cities=data&&Array.isArray(data.cities)?data.cities:[];if(cities.length){status('Choose the matching city:');cities.forEach(x=>{const p=normalizeCity(x),b=document.createElement('button');b.className='result';b.innerHTML='<span>'+flag(p.countryCode)+' '+esc(p.name)+', '+esc(p.country)+'<small>'+esc(p.zone)+'</small></span><b>→</b>';b.addEventListener('click',()=>setPlace(side,p));$('results').appendChild(b)});return}}
+const data=await getJson(PHOTON+'?q='+encodeURIComponent(q)+'&limit=8&lang=en');const features=(data.features||[]).filter(x=>x.geometry&&x.geometry.coordinates);if(!features.length){status('No matches found. Try a different spelling or add the country name.',true);return}status(mode==='zip'?'Choose the matching postal area:':'Choose the matching place:');features.forEach(f=>{const p=normalizePhoton(f),props=f.properties||{},label=[p.name,props.city,props.state,p.country].filter((v,i,a)=>v&&a.indexOf(v)===i).join(', '),b=document.createElement('button');b.className='result';b.innerHTML='<span>'+flag(p.countryCode)+' '+esc(label)+'<small>'+esc(props.postcode||p.country||'')+'</small></span><b>→</b>';b.addEventListener('click',async()=>{b.disabled=true;status('Resolving the time zone…');try{const geo=await getJson(HOURORA+'/lookup?lat='+encodeURIComponent(p.lat)+'&lng='+encodeURIComponent(p.lon));p.zone=geo.zone||(geo.city&&geo.city.zone);if(!p.zone)throw Error('Could not determine the time zone for this result.');if(geo.city&&geo.city.name){p.nearestCity=geo.city.name}setPlace(side,p);if(geo.approximate)$('status').textContent+=' Postal-code time zone is based on the nearest mapped city.'}catch(e){status(e.message||'Unable to look up that time zone.',true);b.disabled=false}});$('results').appendChild(b)})
+}catch(e){status(e.message||'Search is unavailable. Please try again.',true)}finally{$('searchBtn').disabled=false}}
+$('searchBtn').addEventListener('click',search);$('query').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();search()}});
+$('searchMode').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;$('searchMode').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));$('query').placeholder=mode==='city'?'e.g. London, Paris, Tokyo':'e.g. 10001, SW1A 1AA, 75001';$('query').value='';$('results').replaceChildren();status(mode==='city'?'Search using a city name.':'Enter a ZIP or postal code. Include the country if needed.')});
+$('timeFormat').addEventListener('click',e=>{const b=e.target.closest('[data-format]');if(!b)return;format=b.dataset.format;$('timeFormat').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));update()});
+$('role').addEventListener('change',update);
+presets.forEach(p=>{const b=document.createElement('button');b.textContent=flag(p.countryCode)+' '+p.name;b.addEventListener('click',()=>setPlace($('quickTarget').value,p));$('quick').appendChild(b)});
+paintCards();setInterval(update,1000);
 })();
 </script>
 </body>
