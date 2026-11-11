@@ -108,7 +108,8 @@ footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{c
 'use strict';
 const $=id=>document.getElementById(id);
 const PHOTON='https://photon.komoot.io/api/';
-const HOURORA='https://hourora.app/api/v1';\nconst HOLIDAY_API='https://date.nager.at/api/v3';
+const HOURORA='https://hourora.app/api/v1';
+const HOLIDAY_API='https://date.nager.at/api/v3';
 const WEEKEND_FRI_SAT=new Set(['EG','DZ','BH','BD','IQ','IL','JO','KW','LY','OM','QA','SA','SD','YE','PS']);
 const presets=[
 {name:'Cairo',country:'Egypt',countryCode:'EG',zone:'Africa/Cairo',lat:30.0444,lon:31.2357},
@@ -126,7 +127,10 @@ const presets=[
 ];
 let locationA=load('mohsen_compare_a')||presets[0];
 let locationB=load('mohsen_compare_b')||presets[1];
-let mode='city',format='12';\nconst holidayCache=new Map();\nconst HOTEL_MARKETS=[['US','United States'],['GB','United Kingdom'],['CA','Canada'],['DE','Germany'],['FR','France'],['ES','Spain'],['IT','Italy'],['TR','Türkiye'],['AE','United Arab Emirates'],['SA','Saudi Arabia'],['QA','Qatar'],['EG','Egypt'],['JP','Japan'],['IN','India'],['SG','Singapore'],['AU','Australia'],['NL','Netherlands']];\nlet globalHolidays=[];
+let mode='city',format='12';
+const holidayCache=new Map();
+const HOTEL_MARKETS=[['US','United States'],['GB','United Kingdom'],['CA','Canada'],['DE','Germany'],['FR','France'],['ES','Spain'],['IT','Italy'],['TR','Türkiye'],['AE','United Arab Emirates'],['SA','Saudi Arabia'],['QA','Qatar'],['EG','Egypt'],['JP','Japan'],['IN','India'],['SG','Singapore'],['AU','Australia'],['NL','Netherlands']];
+let globalHolidays=[];
 function load(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -174,7 +178,8 @@ function holidayKind(h){const types=h.types||[];if(types.includes('School'))retu
 function refreshSelectedHoliday(side,place){const box=$('holiday'+side);if(!box)return;if(!place.countryCode){box.className='holiday-alert';box.innerHTML='<b>Holiday notice unavailable</b>Country code was not available for this location.';return}box.className='holiday-alert';box.innerHTML='<b>Checking '+esc(place.country)+' holidays…</b>Loading official holiday calendar.';getCountryHolidays(place.countryCode).then(items=>{const today=dateOnlyLocal(new Date(),place.zone),upcoming=items.filter(h=>h.date>=today).sort((a,b)=>a.date.localeCompare(b.date)),todayHoliday=upcoming.find(h=>h.date===today),next=upcoming[0];if(todayHoliday){box.className='holiday-alert today';box.innerHTML='<b>⚠ Public holiday today in '+esc(place.country||place.name)+'</b>'+esc(todayHoliday.localName||todayHoliday.name)+'<small>Hotel note: leisure demand may be higher, but office-based decision makers may be harder to reach.</small>'}else if(next&&daysUntil(next.date,place.zone)<=30){box.className='holiday-alert upcoming';box.innerHTML='<b>Upcoming public holiday · '+daysUntil(next.date)+' day(s) away</b>'+esc(next.localName||next.name)+' — '+holidayDateLabel(next.date)+'<small>Hotel opportunity: consider a relevant seasonal offer or campaign. Confirm the exact local holiday arrangements.</small>'}else if(next){box.className='holiday-alert clear';box.innerHTML='<b>No public holiday in the next 30 days</b>Next listed: '+esc(next.localName||next.name)+' · '+holidayDateLabel(next.date)}else{box.className='holiday-alert';box.innerHTML='<b>No upcoming dates listed</b>The calendar has no future public holidays for this country in its current data.'}}).catch(()=>{box.className='holiday-alert';box.innerHTML='<b>Holiday data unavailable</b>Could not load the holiday calendar right now.'})}
 function renderGlobalHolidays(){const list=$('holidayList');if(!list)return;const range=Number($('holidayRange')?.value||120),today=dateOnlyLocal(new Date()),end=new Date(today+'T00:00:00Z');end.setUTCDate(end.getUTCDate()+range);const until=end.toISOString().slice(0,10);const filtered=globalHolidays.filter(h=>h.date>=today&&h.date<=until&&!(h.types||[]).every(t=>t==='Observance')).sort((a,b)=>a.date.localeCompare(b.date)||String(a.countryName).localeCompare(String(b.countryName)));if(!filtered.length){list.innerHTML='<div class="holiday-empty">No matching public holidays found in this period. Try a longer date range.</div>';return}list.innerHTML=filtered.slice(0,40).map(h=>'<article class="holiday-item"><div class="holiday-date">'+holidayDateLabel(h.date)+'</div><b>'+esc(h.localName||h.name)+'</b><small>'+flag(h.countryCode)+' '+esc(h.countryName||h.countryCode)+' · '+esc(h.name||'Public holiday')+'</small><span class="holiday-tag">'+esc(holidayKind(h))+'</span></article>').join('')}
 async function loadGlobalHolidays(){const list=$('holidayList');if(!list)return;const all=[];for(let i=0;i<HOTEL_MARKETS.length;i+=4){const group=HOTEL_MARKETS.slice(i,i+4);const batch=await Promise.all(group.map(async ([code,name])=>{try{return (await getCountryHolidays(code)).map(h=>({...h,countryName:name}))}catch(e){return []}}));all.push(...batch.flat());}globalHolidays=all;renderGlobalHolidays();if(!globalHolidays.length)list.innerHTML='<div class="holiday-empty">Holiday calendar could not be reached. Please try again later.</div>'}
-\npresets.forEach(p=>{const b=document.createElement('button');b.textContent=flag(p.countryCode)+' '+p.name;b.addEventListener('click',()=>setPlace($('quickTarget').value,p));$('quick').appendChild(b)});
+
+presets.forEach(p=>{const b=document.createElement('button');b.textContent=flag(p.countryCode)+' '+p.name;b.addEventListener('click',()=>setPlace($('quickTarget').value,p));$('quick').appendChild(b)});
 paintCards();refreshSelectedHoliday('A',locationA);refreshSelectedHoliday('B',locationB);loadGlobalHolidays();$('holidayRange').addEventListener('change',renderGlobalHolidays);setInterval(update,1000);
 })();
 </script>
