@@ -166,7 +166,7 @@ $('searchMode').addEventListener('click',e=>{const b=e.target.closest('[data-mod
 $('timeFormat').addEventListener('click',e=>{const b=e.target.closest('[data-format]');if(!b)return;format=b.dataset.format;$('timeFormat').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));update()});
 $('role').addEventListener('change',update);
 
-function dateOnlyLocal(d,zone){return new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:zone||undefined}).format(d)}
+function dateOnlyLocal(d,zone){const p={};new Intl.DateTimeFormat('en-US',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:zone||undefined}).formatToParts(d).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value});return p.year+'-'+p.month+'-'+p.day}
 function holidayDateLabel(iso){const d=new Date(iso+'T12:00:00Z');return new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',weekday:'short',timeZone:'UTC'}).format(d)}
 function daysUntil(iso,zone){const a=new Date(dateOnlyLocal(new Date(),zone)+'T00:00:00Z'),b=new Date(iso+'T00:00:00Z');return Math.round((b-a)/86400000)}
 async function getCountryHolidays(code){if(!code)return [];const cached=holidayCache.get(code);if(cached&&Date.now()-cached.at<6*60*60*1000)return cached.items;const store=load('mohsen_holidays_'+code);if(store&&Date.now()-store.at<6*60*60*1000){holidayCache.set(code,store);return store.items}const items=await getJson(HOLIDAY_API+'/NextPublicHolidays/'+encodeURIComponent(code));const data=Array.isArray(items)?items:[];const result={at:Date.now(),items:data};holidayCache.set(code,result);save('mohsen_holidays_'+code,result);return data}
