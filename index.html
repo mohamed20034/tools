@@ -86,6 +86,13 @@ footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{c
 <div class="quick" id="quick"></div>
 </section>
 
+<section class="panel" id="holidayPanel">
+<div class="panelhead"><h2>UPCOMING HOTEL & TRAVEL HOLIDAYS</h2><div class="holiday-filter"><label class="fieldlabel" for="holidayRange" style="margin:0">LOOK AHEAD</label><select id="holidayRange"><option value="60">Next 60 days</option><option value="120" selected>Next 120 days</option><option value="180">Next 6 months</option><option value="365">Next 12 months</option></select></div></div>
+<p class="note" style="margin:0 0 13px">Public holidays and major days off in key hotel source markets. These dates can signal domestic travel, family trips, events or changes in business availability.</p>
+<div id="holidayList" class="holiday-list"><div class="holiday-loading">Loading upcoming holidays…</div></div>
+<div class="note">Holiday data is sourced from Nager.Date. National and selected regional public holidays are included where available; local observances, school breaks and last-minute moon-sighting announcements may not be fully covered. Always confirm important dates with local sources.</div>
+</section>
+
 <section class="panel">
 <h2 style="margin-bottom:13px">HOTEL OUTREACH — SUGGESTED CALL WINDOWS</h2>
 <div class="guide">
@@ -94,7 +101,7 @@ footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{c
 </div>
 <div class="note">These are practical outreach suggestions, not guaranteed availability. Hotel check-out and check-in patterns vary by property and country. The app marks weekends and compares the current local time with the suggested windows.</div>
 </section>
-<footer>Time-zone lookup: <a href="https://hourora.app/en/developers" target="_blank" rel="noopener">Hourora / IANA</a> · Place search: Photon / OpenStreetMap · © 2026</footer>
+<footer>Time-zone lookup: <a href="https://hourora.app/en/developers" target="_blank" rel="noopener">Hourora / IANA</a> · Place search: Photon / OpenStreetMap · Public holidays: Nager.Date · © 2026</footer>
 </div>
 <script>
 (function(){
