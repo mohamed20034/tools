@@ -51,8 +51,8 @@ footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{c
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><div class="logo">M</div><div><b>MOHSEN TOOLS</b><small>WORLD TIME · HOTEL CALL PLANNER</small></div></div><span class="live"><i></i>LIVE COMPARISON</span></header>
-<section class="hero"><div class="eyebrow">TWO PLACES. ONE CLEAR COMPARISON.</div><h1>Compare time zones</h1><p>Compare the local time, UTC offset and time difference between any two cities or countries. Check whether it is a suitable local time to call a hotel's General Manager or Marketing Manager.</p></section>
+<header class="top"><div class="brand"><div class="logo">M</div><div><b>MOHSEN TOOLS</b><small>WORLD TIME · WORLD CLOCK</small></div></div><span class="live"><i></i>LIVE COMPARISON</span></header>
+<section class="hero"><div class="eyebrow">TWO PLACES. ONE CLEAR COMPARISON.</div><h1>Compare time zones</h1><p>Compare the local time, UTC offset and time difference between any two cities or countries. Check local business hours and compare time zones at a glance.</p></section>
 
 <section class="panel">
 <div class="panelhead"><h2>CHANGE A LOCATION</h2><span class="sidebadge">Search by city OR ZIP / postal code</span></div>
@@ -72,7 +72,7 @@ footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{c
 <section class="panel">
 <div class="panelhead"><h2>LIVE COMPARISON</h2><div class="controls">
 <div class="control"><label>TIME FORMAT</label><div class="format" id="timeFormat"><button type="button" data-format="12" class="active">12H</button><button type="button" data-format="24">24H</button></div></div>
-<div class="control"><label>CALLING</label><select id="role"><option value="gm">General Manager (GM)</option><option value="marketing">Marketing Manager</option></select></div>
+
 </div></div>
 <div class="compare">
 <article class="citycard home" id="cardA"></article><div class="swap">⇄</div><article class="citycard" id="cardB"></article>
@@ -94,10 +94,10 @@ footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{c
 </section>
 
 <section class="panel">
-<h2 style="margin-bottom:13px">HOTEL OUTREACH — SUGGESTED CALL WINDOWS</h2>
+<h2 style="margin-bottom:13px">SUGGESTED HOTEL BUSINESS HOURS</h2>
 <div class="guide">
-<div class="guideitem"><b>General Manager (GM)</b><span>09:30–11:00 · 14:00–15:00</span><small>Try mid-morning or before the afternoon arrival period. Tue–Thu are preferred where possible.</small></div>
-<div class="guideitem"><b>Marketing Manager</b><span>10:00–12:00 · 14:00–16:30</span><small>A broader office-hours window, while avoiding the lunch period and late-day hotel activity.</small></div>
+<div class="guideitem"><b>Morning outreach</b><span>09:30–11:00 · 14:00–15:00</span><small>Try mid-morning or before the afternoon arrival period. Tue–Thu are preferred where possible.</small></div>
+<div class="guideitem"><b>Afternoon outreach</b><span>10:00–12:00 · 14:00–16:30</span><small>A practical afternoon window, while avoiding late-day hotel activity.</small></div>
 </div>
 <div class="note">These are practical outreach suggestions, not guaranteed availability. Hotel check-out and check-in patterns vary by property and country. The app marks weekends and compares the current local time with the suggested windows.</div>
 </section>
@@ -139,7 +139,7 @@ function dateText(zone,date){return new Intl.DateTimeFormat('en-US',{timeZone:zo
 function abbreviation(zone,date){const p=new Intl.DateTimeFormat('en-US',{timeZone:zone,timeZoneName:'short'}).formatToParts(date);return p.find(x=>x.type==='timeZoneName')?.value||zone}
 function signedDiff(m){if(m===0)return 'Same local time';const a=Math.abs(m),h=Math.floor(a/60),n=a%60;return (m>0?'Location B is ahead of A by ':'Location B is behind A by ')+(h?h+'h':'')+(h&&n?' ':'')+(n?n+'m':'')}
 function diffNum(m){const a=Math.abs(m),h=Math.floor(a/60),n=a%60;return (m>0?'+':m<0?'−':'')+h+':'+String(n).padStart(2,'0')}
-function cardMarkup(p,side){return '<div class="cityhead"><div class="cityidentity"><span class="flag">'+flag(p.countryCode)+'</span><div><div class="cityname">'+esc(p.name)+'</div><div class="country">'+esc(p.country||'')+'</div></div></div><span class="sidebadge">LOCATION '+side+'</span></div><div class="time" id="time'+side+'">--:--</div><div class="date" id="date'+side+'"></div><div class="zonebox"><div class="zone-main" id="zone'+side+'">'+esc(p.zone)+'</div><div class="zone-meta" id="offset'+side+'"></div></div><div class="callbox"><div class="calltop"><b>HOTEL CALL CHECK</b><span class="callstatus" id="callStatus'+side+'">Checking…</span></div><div class="callnote" id="callNote'+side+'"></div><div class="callwindow" id="callWindow'+side+'"></div></div><div class="holiday-alert" id="holiday'+side+'">Checking public holidays…</div>'}
+function cardMarkup(p,side){return '<div class="cityhead"><div class="cityidentity"><span class="flag">'+flag(p.countryCode)+'</span><div><div class="cityname">'+esc(p.name)+'</div><div class="country">'+esc(p.country||'')+'</div></div></div><span class="sidebadge">LOCATION '+side+'</span></div><div class="time" id="time'+side+'">--:--</div><div class="date" id="date'+side+'"></div><div class="zonebox"><div class="zone-main" id="zone'+side+'">'+esc(p.zone)+'</div><div class="zone-meta" id="offset'+side+'"></div></div><div class="callbox"><div class="calltop"><b>HOTEL BUSINESS HOURS</b><span class="callstatus" id="callStatus'+side+'">Checking…</span></div><div class="callnote" id="callNote'+side+'"></div><div class="callwindow" id="callWindow'+side+'"></div></div><div class="holiday-alert" id="holiday'+side+'">Checking public holidays…</div>'}
 function paintCards(){try{new Intl.DateTimeFormat('en',{timeZone:locationA.zone});new Intl.DateTimeFormat('en',{timeZone:locationB.zone})}catch(e){$('status').textContent='Invalid time zone returned for a location. Please choose another result.';return}
 $('cardA').innerHTML=cardMarkup(locationA,'A');$('cardB').innerHTML=cardMarkup(locationB,'B');update()}
 function localParts(date,zone){const p={};new Intl.DateTimeFormat('en-US',{timeZone:zone,weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(date).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value});const days={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};return {day:days[p.weekday],hour:Number(p.hour),minute:Number(p.minute)}}
@@ -151,7 +151,7 @@ else if(mins<540||mins>=1080){label='Outside work hours';note='This is outside t
 else if(windows.some(w=>mins>=w[0]&&mins<w[1])){if(role==='gm'&&(day===1||day===5)){state='ok';label='Good working time';note='Within the suggested GM window. Tuesday to Thursday may be easier where possible.'}else{state='good';label='Good time to call';note=role==='gm'?'A suggested quieter window for a GM call, before or between busy guest-arrival periods.':'A suggested office-hours window for a Marketing Manager call.'}}
 else if(mins>=540&&mins<1080){state='ok';label='Working hours';note=mins>=720&&mins<840?'Midday can be busy or close to lunch; try the suggested window instead.':role==='gm'&&mins>=900&&mins<1020?'Afternoon check-in activity may make the GM harder to reach.':'Within normal office hours, but outside the preferred calling window.'}
 return {state,label,note,windowText,dayName:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day],localTime:clockString(p.hour,p.minute)}}
-function updateCall(side,place,now){const advice=callAdvice(place,now,$('role').value),s=$('callStatus'+side);s.className='callstatus '+advice.state;s.textContent=advice.label;$('callNote'+side).textContent=advice.dayName+' · '+advice.localTime+' local time. '+advice.note;$('callWindow'+side).textContent='Suggested: '+advice.windowText+' (local time)'}
+function updateCall(side,place,now){const advice=callAdvice(place,now,'gm'),s=$('callStatus'+side);s.className='callstatus '+advice.state;s.textContent=advice.label;$('callNote'+side).textContent=advice.dayName+' · '+advice.localTime+' local time. '+advice.note;$('callWindow'+side).textContent='Suggested: '+advice.windowText+' (local time)'}
 function update(){if(!$('timeA'))return;const now=new Date();$('timeA').textContent=timeText(locationA.zone,now);$('timeB').textContent=timeText(locationB.zone,now);$('dateA').textContent=dateText(locationA.zone,now);$('dateB').textContent=dateText(locationB.zone,now);const a=offset(now,locationA.zone),b=offset(now,locationB.zone);$('offsetA').textContent=offsetText(a)+' · '+abbreviation(locationA.zone,now);$('offsetB').textContent=offsetText(b)+' · '+abbreviation(locationB.zone,now);const d=b-a;$('diffText').textContent=signedDiff(d);$('diffNumber').textContent=diffNum(d);updateCall('A',locationA,now);updateCall('B',locationB,now)}
 function setPlace(side,p){if(side==='A'){locationA=p;save('mohsen_compare_a',p)}else{locationB=p;save('mohsen_compare_b',p)}paintCards();refreshSelectedHoliday(side,p);$('results').replaceChildren();$('query').value='';$('status').className='status';$('status').textContent=p.name+' added to Location '+side+'.'}
 function status(s,error){$('status').textContent=s;$('status').className='status'+(error?' error':'')}
@@ -164,7 +164,7 @@ const data=await getJson(PHOTON+'?q='+encodeURIComponent(q)+'&limit=8&lang=en');
 $('searchBtn').addEventListener('click',search);$('query').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();search()}});
 $('searchMode').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;$('searchMode').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));$('query').placeholder=mode==='city'?'e.g. London, Paris, Tokyo':'e.g. 10001, SW1A 1AA, 75001';$('query').value='';$('results').replaceChildren();status(mode==='city'?'Search using a city name.':'Enter a ZIP or postal code. Include the country if needed.')});
 $('timeFormat').addEventListener('click',e=>{const b=e.target.closest('[data-format]');if(!b)return;format=b.dataset.format;$('timeFormat').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));update()});
-$('role').addEventListener('change',update);
+
 
 function dateOnlyLocal(d,zone){const p={};new Intl.DateTimeFormat('en-US',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:zone||undefined}).formatToParts(d).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value});return p.year+'-'+p.month+'-'+p.day}
 function holidayDateLabel(iso){const d=new Date(iso+'T12:00:00Z');return new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',weekday:'short',timeZone:'UTC'}).format(d)}
