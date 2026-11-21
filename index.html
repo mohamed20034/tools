@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#090e19">
 <meta name="description" content="Compare local times and time zones between cities around the world.">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>TA Hotels — Time Zone Tools</title>
+<title>Mohsen Tools — Time Zone Tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -51,21 +51,21 @@ footer{text-align:center;color:#74839a;font-size:10px;margin-top:22px}footer a{c
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><div class="logo">TA</div><div><b>TA HOTELS</b><small>HOTEL TIME &amp; TRAVEL TOOLS</small></div></div><span class="live"><i></i>LIVE COMPARISON</span></header>
+<header class="top"><div class="brand"><div class="logo">M</div><div><b>MOHSEN TOOLS</b><small>TIME ZONE &amp; HOTEL TOOLS</small></div></div><span class="live"><i></i>LIVE COMPARISON</span></header>
 <section class="hero"><div class="eyebrow">TWO PLACES. ONE CLEAR COMPARISON.</div><h1>Compare time zones</h1><p>Compare the local time, UTC offset and time difference between any two cities or countries. Check local business hours and compare time zones at a glance.</p></section>
 
 <section class="panel">
-<div class="panelhead"><h2>CHANGE A LOCATION</h2><span class="sidebadge">Search by city OR ZIP / postal code</span></div>
+<div class="panelhead"><h2>CHANGE A LOCATION</h2><span class="sidebadge">Multiple location lookup methods</span></div>
 <div class="searchgrid">
-<div><label class="fieldlabel" for="query">Search for a city or postal code</label><input id="query" autocomplete="off" placeholder="e.g. London, Dubai, 10001"></div>
+<div><label class="fieldlabel" for="query">Enter your location or Geo ID</label><input id="query" autocomplete="off" placeholder="e.g. London, Dubai"></div>
 <div><label class="fieldlabel" for="targetSide">Apply result to</label><select id="targetSide"><option value="A">Location A</option><option value="B">Location B</option></select></div>
 <button class="btn" id="searchBtn">Search</button>
 </div>
 <div class="controls" style="margin-top:12px">
-<div class="control"><label>SEARCH TYPE</label><div class="format" id="searchMode"><button type="button" class="active" data-mode="city">City</button><button type="button" data-mode="zip">ZIP / Postal</button></div></div>
+<div class="control"><label>SEARCH TYPE</label><div class="format" id="searchMode"><button type="button" class="active" data-mode="city">City</button><button type="button" data-mode="zip">ZIP / Postal</button><button type="button" data-mode="coords">Coordinates</button><button type="button" data-mode="osm">OSM Geo ID</button><button type="button" data-mode="geonames">GeoNames ID</button></div></div>
 <div class="control"><label>QUICK CITY APPLIES TO</label><select id="quickTarget"><option value="B">Location B</option><option value="A">Location A</option></select></div>
 </div>
-<div class="status" id="status" aria-live="polite">Choose City or ZIP / Postal, enter a search and select a matching result.</div>
+<div class="status" id="status" aria-live="polite">Choose a search type, enter a city, postal code, coordinates or Geo ID, then select a matching result.</div>
 <div class="results" id="results"></div>
 </section>
 
@@ -161,12 +161,16 @@ function setPlace(side,p){if(side==='A'){locationA=p;save('mohsen_compare_a',p)}
 function status(s,error){$('status').textContent=s;$('status').className='status'+(error?' error':'')}
 function normalizeCity(x){const c=x.country||{};return {name:x.name||x.asciiName||'Selected city',country:typeof c==='string'?c:(c.name||''),countryCode:typeof c==='object'?c.code||'':(x.countryCode||''),zone:x.zone,lat:x.lat,lng:x.lng,flag:flag(typeof c==='object'?c.code:x.countryCode)}}
 function normalizePhoton(f){const p=f.properties||{},[lon,lat]=f.geometry.coordinates;return {name:p.name||p.city||p.postcode||'Selected location',country:p.country||p.state||'',countryCode:(p.countrycode||p.countryCode||'').toUpperCase(),zone:'',lat,lon}}
+async function resolveCoords(p,side,button){if(button)button.disabled=true;status('Resolving the time zone…');try{const geo=await getJson(HOURORA+'/lookup?lat='+encodeURIComponent(p.lat)+'&lng='+encodeURIComponent(p.lon));p.zone=geo.zone||(geo.city&&geo.city.zone);if(!p.zone)throw Error('Could not determine the time zone for this location.');if(geo.city&&geo.city.name)p.nearestCity=geo.city.name;setPlace(side,p);if(geo.approximate)$('status').textContent+=' Time zone is based on the nearest mapped city.'}catch(e){status(e.message||'Unable to look up that time zone.',true);if(button)button.disabled=false}}
 async function search(){const q=$('query').value.trim(),side=$('targetSide').value;if(q.length<2)return;$('searchBtn').disabled=true;$('results').replaceChildren();status('Searching…');try{
+if(mode==='coords'){const parts=q.split(',').map(v=>Number(v.trim()));if(parts.length!==2||!parts.every(Number.isFinite)||Math.abs(parts[0])>90||Math.abs(parts[1])>180)throw Error('Enter valid coordinates as latitude, longitude. Example: 40.7128, -74.0060');await resolveCoords({name:'Coordinates',country:'Custom location',countryCode:'',lat:parts[0],lon:parts[1],zone:''},side);return}
+if(mode==='osm'){const m=q.match(/^([NWR]):?(\\d+)$/i);if(!m)throw Error('Use an OSM Geo ID such as N:123456, W:123456 or R:123456.');const items=await getJson('https://nominatim.openstreetmap.org/lookup?osm_ids='+m[1].toUpperCase()+m[2]+'&format=jsonv2&addressdetails=1');if(!items.length)throw Error('No matching OpenStreetMap object was found.');const x=items[0],a=x.address||{};await resolveCoords({name:a.city||a.town||a.village||x.name||'Selected OSM place',country:a.country||'',countryCode:(a.country_code||'').toUpperCase(),lat:+x.lat,lon:+x.lon,zone:''},side);return}
+if(mode==='geonames'){if(!/^\\d+$/.test(q))throw Error('GeoNames ID must be numeric, for example 2643743.');const x=await getJson('https://secure.geonames.org/getJSON?geonameId='+encodeURIComponent(q)+'&username=demo');if(x.status)throw Error(x.status.message||'GeoNames ID could not be resolved.');await resolveCoords({name:x.name||'GeoNames location',country:x.countryName||x.adminName1||'',countryCode:'',lat:+x.lat,lon:+x.lng,zone:''},side);return}
 if(mode==='city'){let data;try{data=await getJson(HOURORA+'/cities?q='+encodeURIComponent(q)+'&limit=8')}catch(e){data=null}const cities=data&&Array.isArray(data.cities)?data.cities:[];if(cities.length){status('Choose the matching city:');cities.forEach(x=>{const p=normalizeCity(x),b=document.createElement('button');b.className='result';b.innerHTML='<span>'+flag(p.countryCode)+' '+esc(p.name)+', '+esc(p.country)+'<small>'+esc(p.zone)+'</small></span><b>→</b>';b.addEventListener('click',()=>setPlace(side,p));$('results').appendChild(b)});return}}
-const data=await getJson(PHOTON+'?q='+encodeURIComponent(q)+'&limit=8&lang=en');const features=(data.features||[]).filter(x=>x.geometry&&x.geometry.coordinates);if(!features.length){status('No matches found. Try a different spelling or add the country name.',true);return}status(mode==='zip'?'Choose the matching postal area:':'Choose the matching place:');features.forEach(f=>{const p=normalizePhoton(f),props=f.properties||{},label=[p.name,props.city,props.state,p.country].filter((v,i,a)=>v&&a.indexOf(v)===i).join(', '),b=document.createElement('button');b.className='result';b.innerHTML='<span>'+flag(p.countryCode)+' '+esc(label)+'<small>'+esc(props.postcode||p.country||'')+'</small></span><b>→</b>';b.addEventListener('click',async()=>{b.disabled=true;status('Resolving the time zone…');try{const geo=await getJson(HOURORA+'/lookup?lat='+encodeURIComponent(p.lat)+'&lng='+encodeURIComponent(p.lon));p.zone=geo.zone||(geo.city&&geo.city.zone);if(!p.zone)throw Error('Could not determine the time zone for this result.');if(geo.city&&geo.city.name){p.nearestCity=geo.city.name}setPlace(side,p);if(geo.approximate)$('status').textContent+=' Postal-code time zone is based on the nearest mapped city.'}catch(e){status(e.message||'Unable to look up that time zone.',true);b.disabled=false}});$('results').appendChild(b)})
+const data=await getJson(PHOTON+'?q='+encodeURIComponent(q)+'&limit=8&lang=en');const features=(data.features||[]).filter(x=>x.geometry&&x.geometry.coordinates);if(!features.length){status('No matches found. Try a different spelling or add the country name.',true);return}status(mode==='zip'?'Choose the matching postal area:':'Choose the matching place:');features.forEach(f=>{const p=normalizePhoton(f),props=f.properties||{},label=[p.name,props.city,props.state,p.country].filter((v,i,a)=>v&&a.indexOf(v)===i).join(', '),b=document.createElement('button');b.className='result';b.innerHTML='<span>'+flag(p.countryCode)+' '+esc(label)+'<small>'+esc(props.postcode||p.country||'')+'</small></span><b>→</b>';b.addEventListener('click',()=>resolveCoords(p,side,b));$('results').appendChild(b)})
 }catch(e){status(e.message||'Search is unavailable. Please try again.',true)}finally{$('searchBtn').disabled=false}}
 $('searchBtn').addEventListener('click',search);$('query').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();search()}});
-$('searchMode').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;$('searchMode').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));$('query').placeholder=mode==='city'?'e.g. London, Paris, Tokyo':'e.g. 10001, SW1A 1AA, 75001';$('query').value='';$('results').replaceChildren();status(mode==='city'?'Search using a city name.':'Enter a ZIP or postal code. Include the country if needed.')});
+$('searchMode').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;$('searchMode').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));const hints={city:'e.g. London, Paris, San Antonio',zip:'e.g. 10001, SW1A 1AA, 75001',coords:'e.g. 40.7128, -74.0060',osm:'e.g. N:123456, W:123456, R:123456',geonames:'e.g. 2643743 (London)'};$('query').placeholder=hints[mode];$('query').value='';$('results').replaceChildren();status(({city:'Search using a city or place name.',zip:'Enter a ZIP or postal code. Include the country if needed.',coords:'Enter latitude and longitude, separated by a comma.',osm:'Enter an OpenStreetMap Geo ID with N, W or R prefix.',geonames:'Enter a numeric GeoNames ID.'})[mode])});
 $('timeFormat').addEventListener('click',e=>{const b=e.target.closest('[data-format]');if(!b)return;format=b.dataset.format;$('timeFormat').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));update()});
 
 
